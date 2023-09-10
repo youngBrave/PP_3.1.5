@@ -24,7 +24,7 @@ public class UserRestController {
         return ResponseEntity.ok(userServiceImp.getUserById(id));
     }
 
-    @GetMapping("/getUserInfo")
+    @GetMapping("getUserInfo")
     public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(user);
     }

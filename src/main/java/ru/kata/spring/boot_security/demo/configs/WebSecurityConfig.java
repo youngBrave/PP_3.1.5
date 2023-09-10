@@ -9,8 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -25,24 +26,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .antMatchers("/api/user").access("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-                .antMatchers("/api/admin/**").access("hasAuthority('ROLE_ADMIN')")
-                .antMatchers("/user").access("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-                .antMatchers("/admin/**").access("hasAuthority('ROLE_ADMIN')")
+        http.
+                cors().disable()
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .usernameParameter("email")
-                .loginProcessingUrl("/login")
-                .successHandler(successUserHandler).permitAll()
+                .formLogin().successHandler(successUserHandler)
+                .permitAll()
                 .and()
                 .logout()
                 .permitAll()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login?logout")
-                .and().csrf().disable();
+                .and()
+                .httpBasic(withDefaults());
+
     }
 
     @Bean

@@ -24,13 +24,13 @@ public class User implements UserDetails {
     private long id;
     @NotEmpty(message = "Имя не может быть пустым")
     @Size(min = 2, max = 30, message = "Имя не может быть меньше 2, или больше 30 букв")
-    @Column(name = "first_name")
+    @Column(name = "firstname")
     private String firstName;
 
 
     @NotEmpty(message = "LastName не может быть пустым")
     @Size(min = 2, max = 30, message = "Имя не может быть меньше 2, или больше 30 букв")
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     private String lastName;
 
 
@@ -71,8 +71,8 @@ public class User implements UserDetails {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstName(String first_Name) {
+        this.firstName = first_Name;
     }
 
     public void setUsername(String username) {

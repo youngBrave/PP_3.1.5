@@ -20,10 +20,3 @@ async function thisUser() {
             $('#userPanelBody').append(user);
         })
 }
-
-
-
-
-
-
-

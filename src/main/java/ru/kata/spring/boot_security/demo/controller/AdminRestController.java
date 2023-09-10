@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
-
 import java.util.List;
 
 @RestController
@@ -33,8 +32,7 @@ public class AdminRestController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        userServiceImpl.update(user);
-
+        userServiceImpl.update(user.getId(), user);
         return ResponseEntity.ok(user);
     }
 
@@ -44,4 +42,5 @@ public class AdminRestController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

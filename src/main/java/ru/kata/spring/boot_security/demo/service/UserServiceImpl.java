@@ -2,18 +2,14 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.repositiries.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositiries.UserRepository;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +20,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
+
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
     }
 
 
@@ -41,7 +36,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         userRepository.save(user);
     }
-
 
     @Override
     @Transactional
@@ -62,19 +56,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void update(User updateUser) {
-        Optional<User> user = userRepository.findById(updateUser.getId());
-        String oldPassword = "";
-            if (user.isPresent()) {
-            oldPassword = user.get().getPassword();
-            if(updateUser.getRoles()==null){
-            updateUser.setRoles(user.get().getRoles());}
-       }
-        if (!(oldPassword.equals(updateUser.getPassword()))) {
-            updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+    public void update(Long id, User user) {
+        if (user.getPassword().isBlank()) {
+            user.setPassword(getUserById(id).getPassword());
+            user.setId(id);
+            userRepository.saveAndFlush(user);
+        } else {
+            user.setId(id);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.saveAndFlush(user);
         }
-
-        userRepository.save(updateUser);
     }
 
 

@@ -3,19 +3,26 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminRestController {
 
     private final UserServiceImpl userServiceImpl;
+    private final RoleServiceImpl roleServiceImpl;
 
-    public AdminRestController(UserServiceImpl userServiceImpl) {
+    public AdminRestController(UserServiceImpl userServiceImpl, RoleServiceImpl roleServiceImpl) {
         this.userServiceImpl = userServiceImpl;
+        this.roleServiceImpl = roleServiceImpl;
     }
 
     @GetMapping
@@ -42,5 +49,8 @@ public class AdminRestController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok(roleServiceImpl.getAllRoles());
+    }
 }
